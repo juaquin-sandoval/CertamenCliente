@@ -13,16 +13,18 @@
 
 <body>
     <header>
-        <div class="container">
-            <div class="flex-row">
-                <div class="flex-lg-column"></div>
+        <div class="container-fluid bg-primary mb-5">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="text-center text-white mt-5 mb-5">Certamen N°3 Juaquin Sandoval</h1>
+                </div>
             </div>
         </div>
     </header>
 
 
     <div class="container">
-        <h3 class="text-dark mb-4">Team</h3>
+
         <div class="card shadow">
             <div class="card-header py-3">
                 <p class="text-primary m-0 font-weight-bold h4">Listado de Clientes</p>
@@ -99,14 +101,15 @@
                         </div>
                         <div class="form-group">
                             <label for="Celular" class="col-form-label">Celular:</label>
-                            <input type="text" class="form-control" id="Celular" required>
+                            <input type="text" class="form-control" id="Celular" maxlength="9" pattern="/^(\+?56)?(\s?)(0?9)(\s?)[9876543]\d{7}$/" required>
                             <div class="valid-feedback" id="valCel">¡Ok válido!</div>
                             <div class="invalid-feedback" id="invCel">Complete el campo.</div>
+                            <div class="invalid-feedback" id="invCel2">Teléfono no válido</div>
                         </div>
                         <div class="form-group">
                             <label for="exampleFormControlSelect1">Estado Civil:</label>
                             <select class="form-control" id="Estado" required>
-                                <option></option>
+                                <option selected></option>
                               <option value="Soltero(a)">Soltero(a)</option>
                               <option value="Casado(a)">Casado(a)</option>
                               <option value="Divorciado(a)">Divorciado(a)</option>
@@ -174,6 +177,15 @@
 
         });
 
+        function validarTelefono(parametro) {
+            var patron = /^(\+?56)?(\s?)(0?9)(\s?)[9876543]\d{7}$/;
+            if (!patron.test(parametro)) {
+                return false;
+
+            } else {
+                return true;
+            }
+        }
 
         $("#formCliente").submit(function(e) {
             e.preventDefault();
@@ -222,6 +234,11 @@
                 $("#Celular").focus();
                 return false;
 
+            } else if (validarTelefono(Celular) == false) {
+                $("#invCel2").show();
+                $("#Celular").focus();
+                return false;
+
             } else if (Estado == '') {
                 $("#invEstado").show();
                 $("#Estado").focus();
@@ -242,13 +259,13 @@
                 $("#Clave2").focus();
                 return false;
 
+            } else if (Clave != Clave2) {
+                $("#invCI2").show();
+                $("#Clave2").focus();
+                return false;
             }
 
-            if (Mail != null) {
-                $("#invMail").hide();
-                $("#invMail2").hide();
 
-            }
 
             $.ajax({
                 url: 'http://localhost:64618/api/cliente',
@@ -265,10 +282,9 @@
                 },
                 success: function(response) {
                     $("#miModal").modal('hide');
-                    $("#respuesta").html(response);
                     $("#formCliente").trigger('reset');
-
-
+                    alert("Datos ingresados Correctamente!!!");
+                    getCliente();
 
                 },
                 error: function(xhr, status) {
